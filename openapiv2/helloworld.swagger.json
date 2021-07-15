@@ -16,6 +16,43 @@
     "application/json"
   ],
   "paths": {
+    "/foo/{coordinates}": {
+      "get": {
+        "operationId": "Greeter_GetName",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/helloworldGetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "coordinates",
+            "description": "repeated float path_repeated_float_value = 1;",
+            "in": "path",
+            "required": true,
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            },
+            "collectionFormat": "csv",
+            "minItems": 1
+          }
+        ],
+        "tags": [
+          "Greeter"
+        ]
+      }
+    },
     "/v1/example/echo": {
       "post": {
         "summary": "Sends a greeting",
@@ -51,6 +88,19 @@
     }
   },
   "definitions": {
+    "helloworldGetResponse": {
+      "type": "object",
+      "properties": {
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          },
+          "title": "repeated float path_repeated_float_value = 1;"
+        }
+      }
+    },
     "helloworldHelloReply": {
       "type": "object",
       "properties": {

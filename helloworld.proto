@@ -15,6 +15,11 @@ service Greeter {
       body: "*"
     };
   }
+  rpc GetName(GetRequest) returns (GetResponse) {
+    option (google.api.http) = {
+      get: "/foo/{coordinates}"
+    };
+  }
 }
 
 // The request message containing the user's name
@@ -25,4 +30,14 @@ message HelloRequest {
 // The response message containing the greetings
 message HelloReply {
   string message = 1;
+}
+
+message GetRequest {
+  // repeated float path_repeated_float_value = 1;
+  repeated float coordinates = 1;
+}
+
+message GetResponse {
+  // repeated float path_repeated_float_value = 1;
+  repeated float coordinates = 1;
 }
