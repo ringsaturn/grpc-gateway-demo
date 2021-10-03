@@ -21,6 +21,7 @@ type GreeterClient interface {
 	// Sends a greeting
 	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
 	GetName(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	Bar(ctx context.Context, in *BarRequest, opts ...grpc.CallOption) (*BarResponse, error)
 }
 
 type greeterClient struct {
@@ -49,6 +50,15 @@ func (c *greeterClient) GetName(ctx context.Context, in *GetRequest, opts ...grp
 	return out, nil
 }
 
+func (c *greeterClient) Bar(ctx context.Context, in *BarRequest, opts ...grpc.CallOption) (*BarResponse, error) {
+	out := new(BarResponse)
+	err := c.cc.Invoke(ctx, "/helloworld.Greeter/Bar", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GreeterServer is the server API for Greeter service.
 // All implementations must embed UnimplementedGreeterServer
 // for forward compatibility
@@ -56,6 +66,7 @@ type GreeterServer interface {
 	// Sends a greeting
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
 	GetName(context.Context, *GetRequest) (*GetResponse, error)
+	Bar(context.Context, *BarRequest) (*BarResponse, error)
 	mustEmbedUnimplementedGreeterServer()
 }
 
@@ -68,6 +79,9 @@ func (UnimplementedGreeterServer) SayHello(context.Context, *HelloRequest) (*Hel
 }
 func (UnimplementedGreeterServer) GetName(context.Context, *GetRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetName not implemented")
+}
+func (UnimplementedGreeterServer) Bar(context.Context, *BarRequest) (*BarResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Bar not implemented")
 }
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
 
@@ -118,6 +132,24 @@ func _Greeter_GetName_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Greeter_Bar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BarRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).Bar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/helloworld.Greeter/Bar",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).Bar(ctx, req.(*BarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Greeter_ServiceDesc is the grpc.ServiceDesc for Greeter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -132,6 +164,10 @@ var Greeter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetName",
 			Handler:    _Greeter_GetName_Handler,
+		},
+		{
+			MethodName: "Bar",
+			Handler:    _Greeter_Bar_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

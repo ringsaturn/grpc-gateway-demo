@@ -16,6 +16,36 @@
     "application/json"
   ],
   "paths": {
+    "/bar/{name}": {
+      "get": {
+        "operationId": "Greeter_Bar",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/helloworldBarResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Greeter"
+        ]
+      }
+    },
     "/foo/{coordinates}": {
       "get": {
         "operationId": "Greeter_GetName",
@@ -88,6 +118,14 @@
     }
   },
   "definitions": {
+    "helloworldBarResponse": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "helloworldGetResponse": {
       "type": "object",
       "properties": {

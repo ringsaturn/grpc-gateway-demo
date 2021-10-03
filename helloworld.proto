@@ -20,6 +20,11 @@ service Greeter {
       get: "/foo/{coordinates}"
     };
   }
+  rpc Bar(BarRequest) returns (BarResponse) {
+    option (google.api.http) = {
+      get: "/bar/{name}"
+    };
+  }
 }
 
 // The request message containing the user's name
@@ -40,4 +45,12 @@ message GetRequest {
 message GetResponse {
   // repeated float path_repeated_float_value = 1;
   repeated float coordinates = 1;
+}
+
+message BarRequest {
+  string name = 1;
+}
+
+message BarResponse {
+  string name = 1;
 }

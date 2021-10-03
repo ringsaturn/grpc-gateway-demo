@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net"
 	"net/http"
@@ -9,6 +10,8 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	helloworldpb "github.com/ringsaturn/grpc-gateway-demo/proto/helloworld"
 )
@@ -23,6 +26,18 @@ func NewServer() *server {
 
 func (s *server) SayHello(ctx context.Context, in *helloworldpb.HelloRequest) (*helloworldpb.HelloReply, error) {
 	return &helloworldpb.HelloReply{Message: in.Name + " world"}, nil
+}
+
+func (s *server) Bar(ctx context.Context, in *helloworldpb.BarRequest) (*helloworldpb.BarResponse, error) {
+	if in.Name == "fake" {
+		return nil, status.Errorf(codes.InvalidArgument, "fake not support")
+	}
+	if in.Name == "error" {
+		return nil, errors.New("cause error")
+	}
+	return &helloworldpb.BarResponse{
+		Name: in.Name,
+	}, nil
 }
 
 func main() {
