@@ -28,12 +28,17 @@ func (s *server) SayHello(ctx context.Context, in *helloworldpb.HelloRequest) (*
 	return &helloworldpb.HelloReply{Message: in.Name + " world"}, nil
 }
 
+var customErr = status.Errorf(codes.Code(10010), "custom error")
+
 func (s *server) Bar(ctx context.Context, in *helloworldpb.BarRequest) (*helloworldpb.BarResponse, error) {
 	if in.Name == "fake" {
 		return nil, status.Errorf(codes.InvalidArgument, "fake not support")
 	}
 	if in.Name == "error" {
 		return nil, errors.New("cause error")
+	}
+	if in.Name == "cus" {
+		return nil, customErr
 	}
 	return &helloworldpb.BarResponse{
 		Name: in.Name,
